@@ -33,7 +33,7 @@ const withOutSession = async (req, res, next) => {
  
   client.on('qr', qr => generateImage(qr, () => {
     //console.log("el qr",qr )
-    //qrcode.generate(qr, { small: true });
+    qrcode.generate(qr, { small: true });
     res.status(200).json(qr)
 
   }))
@@ -93,16 +93,32 @@ const withOutSession = async (req, res, next) => {
         }
       }
    
-    const number = cleanNumber(from)
+    const allChats = await client.getChats();
+      const lastFiftyChats = allChats.splice(0,10);
+      
+      lastFiftyChats.forEach(async(element)=>{ 
+        if(element.isGroup=='false'){
+           const status=await dbSequelize.message.findOne({ where: { clientNumber: `${element.id.user}@c.us` } });
+           if(!status){
+                let description=[];
+                description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: "Vi esto en Facebook....", usuario:"cliente" });
+                let Users = await dbSequelize.user.findAll({ where: { Role_idRole: 2 }, order: [['count', 'ASC']] });
+                await dbSequelize.user.update({ count: Users[0].count + 1 }, { where: { idUser: Users[0].idUser, } });
+                let dataSend = { body: description , clientNumber: `${element.id.user}@c.us`, idUser: Users[0].idUser, status: 0 }
+                await dbSequelize.message.create(dataSend)
+           }
+          
+        }
+         
+      })
+  
   
   });
  
   
 
   if (codQR) { res.status(200).json(codQR) }
-  client.on('auth_failure', (e) => {
-    // console.log(e)
-    // connectionLost()
+  client.on('auth_failure', (e) => { 
   });
 
   client.on('authenticated', (session) => {
