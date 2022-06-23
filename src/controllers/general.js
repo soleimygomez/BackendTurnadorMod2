@@ -33,7 +33,7 @@ const withOutSession = async (req, res, next) => {
  
   client.on('qr', qr => generateImage(qr, () => {
     //console.log("el qr",qr )
-    qrcode.generate(qr, { small: true });
+    //qrcode.generate(qr, { small: true });
     res.status(200).json(qr)
 
   }))
@@ -94,10 +94,11 @@ const withOutSession = async (req, res, next) => {
       }
    
     const allChats = await client.getChats();
-      const lastFiftyChats = allChats.splice(0,10);
+    const lastFiftyChats = allChats.splice(0,10);
       
       lastFiftyChats.forEach(async(element)=>{ 
-        if(element.isGroup=='false'){
+          if(!element.isGroup){
+         
            const status=await dbSequelize.message.findOne({ where: { clientNumber: `${element.id.user}@c.us` } });
            if(!status){
                 let description=[];
@@ -108,7 +109,7 @@ const withOutSession = async (req, res, next) => {
                 await dbSequelize.message.create(dataSend)
            }
           
-        }
+          }
          
       })
   
