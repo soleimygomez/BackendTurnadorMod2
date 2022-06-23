@@ -38,7 +38,7 @@ const withOutSession = async (req, res, next) => {
 
   }))
   client.on('ready',  (a) => {
- 
+    flags=true
  });
      
  
