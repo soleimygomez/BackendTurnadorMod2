@@ -12,27 +12,7 @@ const cleanNumber = (number) => {
     return number
 }
 
-// const saveExternalFile = (url) => new Promise((resolve, reject) => {
-//     const ext = url.split('.').pop()
-//     const checkProtocol = url.split('/').includes('https:');
-//     const handleHttp = checkProtocol ? https : http;
-//     const name = `${Date.now()}.${ext}`;
-//     const file = fs.createWriteStream(`${__dirname}/../mediaSend/${name}`);
-//     console.log(url)
-//      handleHttp.get(url, function(response) {
-//         response.pipe(file);
-//         file.on('finish', function() {
-//             file.close();  // close() is async, call cb after close completes.
-//             resolve(name)
-//         });
-//         file.on('error', function() {
-//             console.log('errro')
-//             file.close();  // close() is async, call cb after close completes.
-//             resolve(null)
-//         });
-//     });
-// })
-
+ 
 const checkIsUrl = (path) => {
     try{
         regex = /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/i;
@@ -73,24 +53,9 @@ const createClient =  (session = {}, login = false) => {
         })
     } : {session};
 
-    if(MULTI_DEVICE == 'false') {
-       return {...objectLegacy,
-        restartOnAuthFail: true,
-        puppeteer: {
-            args: [
-                '--no-sandbox'
-            ],
-        }
-    }
-    }else{
-        return {
-            puppeteer: { 
-                headless: true, 
-                args: ['--no-sandbox'] 
-            }, 
-            clientId: 'client-one' 
-        }
-    }
+    return {...objectLegacy, restartOnAuthFail: true, puppeteer: {
+        args: [ '--no-sandbox'  ] ,headless: false, read_timeout: 60000
+    } }
 }
 
 const isValidNumber = (rawNumber) => {
