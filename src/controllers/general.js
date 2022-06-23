@@ -29,7 +29,7 @@ let flags = false;
  */
 const withOutSession = async (req, res, next) => {
   console.log('No tenemos session guardada');
-   
+  client = new Client(createClient());
  
   client.on('qr', qr => generateImage(qr, () => {
     //console.log("el qr",qr )
