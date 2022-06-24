@@ -49,8 +49,8 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    updatedAt: {
-      type: DataTypes.DATE,
+    nameClient: {
+      type: DataTypes.STRING,
       allowNull: true,
       autoIncrement: false,
       primaryKey: false,

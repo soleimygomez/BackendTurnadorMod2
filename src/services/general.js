@@ -185,6 +185,21 @@ const EdithMessage=async(req)=>{
     console.log(e);
     return { status: 500, message: "Error interno del servidor." }}
 };
+const AggContact=async(req)=>{
+  try { 
+  const {id, name } = req.headers;
+   
+  let messageRow =   await dbSequelize.message.update({  nameClient: name }, {  where: { idMessage : id, }
+  });
+  if(messageRow){
+    return { status: 200, message: "El mensaje se ha actualizado correctamente" };
+  }
+   else{return { status: 404, message: "Error actualizando el mensaje" };}
+  }
+  catch (e) {
+    console.log(e);
+    return { status: 500, message: "Error interno del servidor." }}
+};
 const EdithMessageStatus=async(req)=>{
   try {
   const {id} = req.headers;
@@ -211,7 +226,7 @@ const AllMessage=async()=>{
 const AllMessageUser=async(req)=>{
   try {
     const {iduser}=req.headers;
-    const Message= await dbSequelize.message.findAll({where:{idUser:iduser}, include: [ { model: dbSequelize.user,required:true },{ model: dbSequelize.comment } ],order: [['idMessage', 'DESC']]  });
+    const Message= await dbSequelize.message.findAll({where:{idUser:iduser}, include: [ { model: dbSequelize.user,required:true },{ model: dbSequelize.comment } ],order: [['updatedAt', 'DESC']]  });
     return { status: 200, data: Message };
   } catch (e) {
     console.log(e);
@@ -312,4 +327,4 @@ const EdithAnserw=async(req)=>{
 
 };
 
-module.exports = {EdithAnserw,deleteAnserw,newAnserw,getByUsers,ByOneMessage,EliminarComment,EdithComment,userInformation,EdithMessageStatus,AllMessageUser,EdithMessage,AllComment,createUser,login,AllUser,createComment,AllMessage };
+module.exports = {AggContact,EdithAnserw,deleteAnserw,newAnserw,getByUsers,ByOneMessage,EliminarComment,EdithComment,userInformation,EdithMessageStatus,AllMessageUser,EdithMessage,AllComment,createUser,login,AllUser,createComment,AllMessage };
