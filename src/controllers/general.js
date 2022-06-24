@@ -44,6 +44,7 @@ const withOutSession = async (req, res, next) => {
  
   client.on('message', async msg => {
     const { from, body, hasMedia } = msg;
+    console.log(msg,"mensaje que llegaaaaa ")
     if (from === 'status@broadcast' ) {
       return
     }
@@ -294,8 +295,9 @@ const AllMessageUser = async (req, res, next) => {
     const result = await general_services.AllMessageUser(req);
     if (result.status === 200) {
       result.data.forEach(element => {
+        console.log(element.nameClient)
         let lengthdata=element.body.length; 
-        dataSend.push({ idMessage: element.idMessage, body:element.body[lengthdata-1].mensaje ,clientNumber: element.clientNumber, status: element.status, createdAt: element.createdAt, asesora: element.User.name, comment: element.comment ? element.comment.name : "", colour: element.comment ? element.comment.colour : "", phoneAsesor: element.User.phoneNumber });
+        dataSend.push({ idMessage: element.idMessage, body:element.body[lengthdata-1].mensaje ,clientNumber: element.clientNumber, status: element.status, createdAt: element.createdAt, asesora: element.User.name, comment: element.comment ? element.comment.name : "", colour: element.comment ? element.comment.colour : "", phoneAsesor: element.User.phoneNumber ,nameClient:element.nameClient?element.nameClient:null});
        }); 
       res.status(result.status).json(dataSend);
     } else {
@@ -417,8 +419,7 @@ const responseMessage = async (req, res, next) => {
      
     client.sendMessage(chatId, texto)
       .then(async (Response) => {
-        if (Response.id.fromMe) {
-          console.log("El mensaje fue enviado Correctamente");
+        if (Response.id.fromMe) { 
           let dataConsult = infoMessage.body;
            //console.log(dataConsult)
           if (dataConsult != undefined) {
@@ -435,7 +436,7 @@ const responseMessage = async (req, res, next) => {
 
         }
 
-        res.status(200).json("El mensaje se ha Enviado Correctamente")
+        // res.status(200).json("El mensaje se ha Enviado Correctamente")
       })
     } 
     if(req.files.archivo != undefined){ 
@@ -548,5 +549,21 @@ const EdithAnserw = async (req, res, next) => {
     });
   }
 };
+const AggContact =async (req, res, next) => {
+  try {
+    const result = await general_services.AggContact(req);
+    if (result.status === 200) {
+      res.status(result.status).json(result.message);
+    } else {
+      res.status(result.status).json(result.message);
+    }
+    next();
+  } catch (e) {
+    console.log('Error', e);
+    res.status(500).json({
+      message: 'Por favor, valida los datos ingresados e intenta nuevamente.',
+    });
+  }
+};
 
-module.exports = {EdithAnserw,deleteAnserw,newAnserw,getByUsers,get64Img,ByOneMessage, responseMessage, Downoload, withOutSession, EliminarComment, EdithComment, userInformation, EdithMessageStatus, AllMessageUser, AllMessage, createComment, AllComment, AllUser, createUser, makeLogin, EdithMessage }
+module.exports = {AggContact,EdithAnserw,deleteAnserw,newAnserw,getByUsers,get64Img,ByOneMessage, responseMessage, Downoload, withOutSession, EliminarComment, EdithComment, userInformation, EdithMessageStatus, AllMessageUser, AllMessage, createComment, AllComment, AllUser, createUser, makeLogin, EdithMessage }

@@ -84,7 +84,8 @@ router.get('/Message/AllMessage', general_controller.AllMessage);
 router.get('/Message/OneMessage', general_controller.ByOneMessage);
 router.get('/Message/AllMessageByAsesora', general_controller.AllMessageUser);
 router.get('/Message/userInformation',general_controller.userInformation);
-router.get('/Message/Downoload',general_controller.Downoload)
+router.get('/Message/Downoload',general_controller.Downoload);
+router.put('/Message/AggContact', general_controller.AggContact);
 //*************************************************************** */
 //*************************************************************** */
 //Respuestas Rapidas
@@ -92,7 +93,6 @@ router.get('/Message/Downoload',general_controller.Downoload)
 router.get('/AnserwFlash/getByUsers',general_controller.getByUsers)
 router.post('/AnserwFlash/newAnserw',general_controller.newAnserw)
 router.delete('/AnserwFlash/deleteAnserw', general_controller.deleteAnserw);
-router.put('/AnserwFlash/EdithAnserw', general_controller.EdithAnserw);
-
+router.put('/AnserwFlash/EdithAnserw', general_controller.EdithAnserw);  
 //Export
 module.exports = router;

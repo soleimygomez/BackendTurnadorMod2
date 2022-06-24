@@ -51,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     nameClient: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       autoIncrement: false,
       primaryKey: false,
       defaultValue: null
