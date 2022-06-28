@@ -48,7 +48,9 @@ const withOutSession = async (req, res, next) => {
     if (from === 'status@broadcast' ) {
       return
     }
-        
+    if (!from.includes('@g') ) {
+      
+    
     let objectMessage =[];
     if (hasMedia) {
       const media = await msg.downloadMedia();
@@ -98,7 +100,7 @@ const withOutSession = async (req, res, next) => {
     const lastFiftyChats = allChats.splice(0,10);
       
       lastFiftyChats.forEach(async(element)=>{ 
-          if(!element.isGroup){
+          if(!element.isGroup && !from.includes('@g') ){
          
            const status=await dbSequelize.message.findOne({ where: { clientNumber: `${element.id.user}@c.us` } });
            if(!status){
@@ -113,7 +115,7 @@ const withOutSession = async (req, res, next) => {
           }
          
       })
-  
+    }
   
   });
  
@@ -194,10 +196,10 @@ const makeLogin = async (req, res, next) => {
     try {
       const result = await general_services.login(email, password);
       if (result.status === 200) {
-        console.log(result)
+        //console.log(result)
         res.status(result.status).json(result.data);
       } else {
-        console.log(result)
+        //console.log(result)
         res.status(result.status).json({ message: result.message });
       } next();
     } catch (e) {
@@ -295,7 +297,7 @@ const AllMessageUser = async (req, res, next) => {
     const result = await general_services.AllMessageUser(req);
     if (result.status === 200) {
       result.data.forEach(element => {
-        console.log(element.nameClient)
+        //console.log(element.nameClient)
         let lengthdata=element.body.length; 
         dataSend.push({ idMessage: element.idMessage, body:element.body[lengthdata-1].mensaje ,clientNumber: element.clientNumber, status: element.status, createdAt: element.createdAt, asesora: element.User.name, comment: element.comment ? element.comment.name : "", colour: element.comment ? element.comment.colour : "", phoneAsesor: element.User.phoneNumber ,nameClient:element.nameClient?element.nameClient:null});
        }); 

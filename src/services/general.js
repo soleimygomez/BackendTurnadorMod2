@@ -11,7 +11,7 @@ const Op = dbSequelize.Sequelize.Op;
 const createUser = async (req) => {
    
   const{email, password,name,phonenumber,role_idrole }=req.headers
-  console.log(email, password,name,phonenumber,role_idrole)
+  //console.log(email, password,name,phonenumber,role_idrole)
   try {
     let userRow
     if(parseInt(role_idrole)===1){
@@ -120,8 +120,8 @@ const AllUser=async()=>{
 const userInformation=async(req)=>{
   try {
     const{rol,iduser}=req.headers;
-    console.log(rol);
-    console.log(typeof(rol))
+    // console.log(rol);
+    // console.log(typeof(rol))
     if(rol==="1"){
       const MessageNotLeido= await dbSequelize.message.findAll({ where:{status:0},include:[{model:dbSequelize.user, required:true}] });
       const Llegados=await dbSequelize.message.findAll({ });
@@ -173,7 +173,7 @@ const EdithMessage=async(req)=>{
   try { 
   const {id, comment } = req.headers;
   
-  console.log(id, comment )
+  // console.log(id, comment )
   let messageRow =   await dbSequelize.message.update({  idComment: comment }, {  where: { idMessage : id, }
   });
   if(messageRow){
