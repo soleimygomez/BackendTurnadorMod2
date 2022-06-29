@@ -44,7 +44,7 @@ const withOutSession = async (req, res, next) => {
  
   client.on('message', async msg => {
     const { from, body, hasMedia } = msg;
-    console.log(msg,"mensaje que llegaaaaa ")
+    //console.log(msg,"mensaje que llegaaaaa ")
     if (from === 'status@broadcast' ) {
       return
     }
@@ -69,16 +69,25 @@ const withOutSession = async (req, res, next) => {
     
    
     let search = await dbSequelize.message.findOne({ where: { clientNumber: objectMessage.from } });
-   
-    if (search) {
+    const responsmessage=await msg.getQuotedMessage(); 
+    if (search ) {
       if(objectMessage.body!="" || objectMessage.hasMedia  ){
       let dataConsult = search.dataValues.body; 
       let archivo=search.dataValues.multimediaContent?search.dataValues.multimediaContent:[];
-      let description = dataConsult;  
-       // archivo.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), urls: objectMessage.url ,usuario:"cliente" });
-        description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: objectMessage.body?objectMessage.body:objectMessage.url, usuario:"cliente" });
+      let description = dataConsult; 
+      if(responsmessage && !responsmessage.hasMedia){ 
+        description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: `Respondio Al Mensaje ${responsmessage._data.body} con ${objectMessage.body?objectMessage.body:objectMessage.url}` , usuario:"cliente" });
+       await dbSequelize.message.update({ body: description, status: 0 }, { where: { idMessage: search.idMessage } });
+      } 
+      else if(responsmessage && responsmessage.hasMedia){
+        let img = await msg.downloadMedia();
+        console.log(img)
+      }
+      else{ 
+       description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: objectMessage.body?objectMessage.body:objectMessage.url, usuario:"cliente" });
        await dbSequelize.message.update({ body: description, status: 0 }, { where: { idMessage: search.idMessage } });
        } 
+      }
        
     }
     else {  
@@ -95,7 +104,7 @@ const withOutSession = async (req, res, next) => {
 
         }
       }
-   
+    
     const allChats = await client.getChats();
     const lastFiftyChats = allChats.splice(0,10);
       
