@@ -73,15 +73,17 @@ const withOutSession = async (req, res, next) => {
     if (search ) {
       if(objectMessage.body!="" || objectMessage.hasMedia  ){
       let dataConsult = search.dataValues.body; 
-      let archivo=search.dataValues.multimediaContent?search.dataValues.multimediaContent:[];
+     // let archivo=search.dataValues.multimediaContent?search.dataValues.multimediaContent:[];
       let description = dataConsult; 
       if(responsmessage && !responsmessage.hasMedia){ 
         description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: `Respondio Al Mensaje ${responsmessage._data.body} con ${objectMessage.body?objectMessage.body:objectMessage.url}` , usuario:"cliente" });
        await dbSequelize.message.update({ body: description, status: 0 }, { where: { idMessage: search.idMessage } });
       } 
       else if(responsmessage && responsmessage.hasMedia){
-        let img = await msg.downloadMedia();
-        console.log(img)
+        //console.log(responsmessage)
+         description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: `Respondio a ${responsmessage._data.mimetype.includes('audio')?"un audio":"una imagen"} con ${objectMessage.body?objectMessage.body:objectMessage.url}` , usuario:"cliente" });
+         await dbSequelize.message.update({ body: description, status: 0 }, { where: { idMessage: search.idMessage } });
+         
       }
       else{ 
        description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: objectMessage.body?objectMessage.body:objectMessage.url, usuario:"cliente" });
