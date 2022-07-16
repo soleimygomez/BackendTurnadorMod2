@@ -112,13 +112,12 @@ const withOutSession = async (req, res, next) => {
       
       lastFiftyChats.forEach(async(element)=>{ 
           if(!element.isGroup && !from.includes('@g') ){
-         
-           const status=await dbSequelize.message.findOne({ where: { clientNumber: `${element.id.user}@c.us` } });
-           if(!status){
+            let Users = await dbSequelize.user.findAll({ where: { Role_idRole: 2 }, order: [['count', 'ASC']] });
+            const status=await dbSequelize.message.findOne({ where: { clientNumber: `${element.id.user}@c.us` } });
+           if(!status){ 
                 let description=[];
                 description.push({ fecha: new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }), mensaje: "Vi esto en Facebook....", usuario:"cliente" });
-                let Users = await dbSequelize.user.findAll({ where: { Role_idRole: 2 }, order: [['count', 'ASC']] });
-                await dbSequelize.user.update({ count: Users[0].count + 1 }, { where: { idUser: Users[0].idUser, } });
+                 await dbSequelize.user.update({ count: Users[0].count + 1 }, { where: { idUser: Users[0].idUser, } });
                 let dataSend = { body: description , clientNumber: `${element.id.user}@c.us`, idUser: Users[0].idUser, status: 0 }
                 await dbSequelize.message.create(dataSend)
            }
@@ -126,6 +125,7 @@ const withOutSession = async (req, res, next) => {
           }
          
       })
+
     }
   
   });
@@ -399,7 +399,7 @@ const Downoload = async (req, res, next) => {
       let month = date.getMonth();
       let year = date.getFullYear();
 
-      let url = "../../files/ReporteMensajes" + "_" + day + "-" + month + "-" + year + ".xlsx";
+      let url = "./files/ReporteMensajes" + "_" + day + "-" + month + "-" + year + ".xlsx";
 
       let workbookAbout = Excel.writeFile(workbook, url, { bookType: 'xlsx', type: 'binary' });
 
@@ -419,8 +419,7 @@ const Downoload = async (req, res, next) => {
   }
 
 };
-const responseMessage = async (req, res, next) => {
-  //console.log(req.files,req.files.archivo)
+const responseMessage = async (req, res, next) => { 
   const { texto, idmessage} = req.headers;
   let files = null;
   let arrayPaths = [];
@@ -459,6 +458,7 @@ const responseMessage = async (req, res, next) => {
             path: path.normalize(element.path),
             mimetype: element.mimetype
           };
+          //console.log(filePath);
           arrayPaths.push(filePath); 
           await uploadFileS3WithPath(filePath.path,`files/mediaSend/`,filePath.mimetype);
          const mediafile=MessageMedia.fromFilePath(`${filePath.path}`)
